@@ -15,27 +15,38 @@ build = "0.1"
 #----DATABASE TABLES----
 class Reservation(db.Model):
     __tablename__ = 'res'
-    rID = db.Column(db.Integer, primary_key=True)
-    cID = db.Column(db.Integer)
+    resID = db.Column(db.Integer, primary_key=True)
+    guestID = db.Column(db.Integer)
     inDate = db.Column(db.Date)
     outDate = db.Column(db.Date)
     roomNumber = db.Column(db.String)
     #tags = db.relationship('Tag', secondary=enrollment,
     #                            backref=db.backref('courses',lazy='dynamic'))
 
-class Rooms(db.Model):
+class Room(db.Model):
     __tablename__ = 'rooms'
     roomNumber = db.Column(db.String, primary_key=True)
     occupancy = db.Column(db.Integer)
     occupied = db.Column(db.Boolean)
     dirty = db.Column(db.Boolean)
 
-class Guests(db.Model):
+class Guest(db.Model):
 	__tablename__ = 'guests'
-	gID = db.Column(db.Integer, primary_key=True)
+	guestID = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String)
 	address = db.Column(db.String)
 	phone = db.Column(db.String)
+
+class RoomRes(db.Model): #secondary table. Matches rooms with res
+	__tablename__ = 'roomres'
+	roomNumber = db.Column(db.String, ForeignKey('rooms.roomNumber'))
+	resID = db.Column(db.Integer, ForeignKey('res.resID'))
+	
+class GuestRes(db.Model): #secondary table. Matches guests with res
+	__tablename__ = 'guestres'
+	guestID = db.Column(db.Integer, ForeignKey('guests.guestID'))
+	resID = db.Column(db.Integer, ForeignKey('res.resID'))
+
 #--------
 
 
