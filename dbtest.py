@@ -1,18 +1,26 @@
-from flask import *
-from jinja2 import Template
+from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 import datetime
 
 app = Flask(__name__)
-app.debug = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
 db = SQLAlchemy(app)
 
-appname = "FastRooms"
-build = "0.1"
 
 
-#----DATABASE TABLES----
+# class Enrollment(db.Model):
+#     __table__ = 'enrollment'
+#     course_num = db.Column(db.Integer, db.ForeignKey('course.course_num'))
+#     student_id = db.Column(db.Integer, db.ForeignKey('student.student_id'))
+
+
+#enrollment = db.Table('enrollment',
+#    db.Column('course_num',db.Integer, db.ForeignKey('course.course_num')),
+#    db.Column('student_id',db.Integer, db.ForeignKey('student.student_id')),
+#    db.Column('grade',db.Integer)
+#)
+
+
 class Reservation(db.Model):
     __tablename__ = 'res'
     rID = db.Column(db.Integer, primary_key=True)
@@ -36,31 +44,16 @@ class Guests(db.Model):
 	name = db.Column(db.String)
 	address = db.Column(db.String)
 	phone = db.Column(db.String)
-#--------
+
+db.drop_all()
+db.create_all()
 
 
 
-#----PAGES----
-@app.route('/res')
-def res_page():
-	title = "Reservations"
-	return render_template('display.html',appname=appname,title=title)
+#db.session.add_all([r1])
 
-@app.route('/op')
-def operations_page():
-	title = "Operations"
-	return render_template('display.html',appname=appname,title=title)
+#db.session.add(p1)
 
-@app.route('/hk')
-def housekeeping_page():
-	title = "Housekeeping Overview"
-	return render_template('display.html',appname=appname,title=title)
-	
 
-#Pretty 404 page
-@app.errorhandler(404)
-def error404(e):
-	return render_template('404.html',appname=appname,build=build), 404
-	
-if __name__ == '__main__':
-	app.run()
+
+db.session.commit()
