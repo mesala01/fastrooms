@@ -39,13 +39,13 @@ class Guest(db.Model):
 
 class RoomRes(db.Model): #secondary table. Matches rooms with res
 	__tablename__ = 'roomres'
-	roomNumber = db.Column(db.String, ForeignKey('rooms.roomNumber'))
-	resID = db.Column(db.Integer, ForeignKey('res.resID'))
+	roomNumber = db.Column(db.String, db.ForeignKey('rooms.roomNumber'))
+	resID = db.Column(db.Integer, db.ForeignKey('res.resID'))
 	
 class GuestRes(db.Model): #secondary table. Matches guests with res
 	__tablename__ = 'guestres'
-	guestID = db.Column(db.Integer, ForeignKey('guests.guestID'))
-	resID = db.Column(db.Integer, ForeignKey('res.resID'))
+	guestID = db.Column(db.Integer, db.ForeignKey('guests.guestID'))
+	resID = db.Column(db.Integer, db.ForeignKey('res.resID'))
 
 #--------
 
