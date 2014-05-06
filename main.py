@@ -55,18 +55,63 @@ db.create_all()
 
 
 
-
-def checkingInOn():
+#----TestCases----
+def createTestRoom():
 	fakeRoom = Room()
 	fakeRoom.roomNumber = '100'
 	fakeRoom.occupancy = 2
 	fakeRoom.occupied = False
-	fakeRoom.dirty = False
+	fakeRoom.dirty = True
 	db.session.add(fakeRoom)
 	db.session.commit()
-def checkingOutToday():
-	pass
 
+def createTestRes():
+	fakeRes = Reservation()
+	fakeRes.roomNumber = '100'
+	fakeRes.inDate = datetime.date(2014,6,1)
+	db.session.add(fakeRes)
+	db.session.commit()
+#--------
+#----Database Accessors----
+def getRoom(roomID):
+	#roomID should be str
+	result = []
+	for rm in db.session.query(Room).filter_by(roomNumber=roomID):
+		result.append(rm)
+	if (len(result) > 1):
+		print('DATA ERROR: Duplicate room numbers from getRoom('+roomID+').')
+	return result[0]
+	
+def getRes(rvtnID):
+	#rvtnID should be int
+	result = []
+	for rv in db.session.query(Reservation).filter_by(resID=rvtnID):
+		result.append(rv)
+	if (len(result) > 1):
+		print('DATA ERROR: Duplicate reservation numbers from getRes('+ str(rvtnID) +').')
+	return result[0]
+
+def getDirtyRooms():
+	hklist = []
+	for r in db.session.query(Room).filter_by(occupied=False,dirty=True):
+		hklist.append(r)
+	return hklist
+		
+def getAllResForRoom(room):
+	roomNum = room.roomNumber
+	rvtns = []
+	for rv in db.session.query(Reservation).filter_by(roomNumber=roomNum):
+		rvtns.append(rv)
+	return rvtns
+	
+def roomResListing(roomNum):
+	rvtns = []
+	for rv in getAllResForRoom(getRoom(roomNum)):
+		rvtns.append(rv)
+	return rvtns
+
+createTestRoom()
+createTestRes()
 
 #----PAGES----
 @app.route('/res')
@@ -77,13 +122,19 @@ def res_page():
 @app.route('/op')
 def operations_page():
 	title = "Operations"
-	checkingInOn()
-	return render_template('display.html',appname=appname,title=title)
+	content = ""
+	for rv in roomResListing('100'):
+		 content += str(rv.inDate)
+	
+	return render_template('display.html',appname=appname,title=title,content=content)
 
 @app.route('/hk')
 def housekeeping_page():
 	title = "Housekeeping Overview"
-	return render_template('display.html',appname=appname,title=title)
+	content = "The following rooms need to be cleaned: "
+	for r in getDirtyRooms():
+		content += r.roomNumber
+	return render_template('display.html',appname=appname,title=title,content=content)
 	
 
 #Pretty 404 page
