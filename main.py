@@ -20,8 +20,7 @@ class Reservation(db.Model):
     inDate = db.Column(db.Date)
     outDate = db.Column(db.Date)
     roomNumber = db.Column(db.String)
-    #tags = db.relationship('Tag', secondary=enrollment,
-    #                            backref=db.backref('courses',lazy='dynamic'))
+    status = db.Column(db.String) #prior to check in:"booked"  checkedin: "open"  checked out: "closed"
 
 class Room(db.Model):
     __tablename__ = 'rooms'
@@ -29,7 +28,7 @@ class Room(db.Model):
     building = db.Column(db.String)
     occupancy = db.Column(db.Integer)
     occupied = db.Column(db.Boolean)
-    dirty = db.Column(db.Boolean)
+    clean = db.Column(db.Boolean)
 
 class Guest(db.Model):
 	__tablename__ = 'guests'
@@ -61,17 +60,19 @@ def createTestRoom():
 	fakeRoom.roomNumber = '100'
 	fakeRoom.occupancy = 2
 	fakeRoom.occupied = False
-	fakeRoom.dirty = True
+	fakeRoom.clean = False
 	db.session.add(fakeRoom)
 	db.session.commit()
 
 def createTestRes():
 	fakeRes = Reservation()
+	fakeRes.resID = 1
 	fakeRes.roomNumber = '100'
-	fakeRes.inDate = datetime.date(2014,6,1)
+	fakeRes.inDate = datetime.date(2014,5,7)
 	db.session.add(fakeRes)
 	db.session.commit()
 #--------
+
 #----Database Accessors----
 def getRoom(roomID):
 	#roomID should be str
@@ -81,7 +82,10 @@ def getRoom(roomID):
 	if (len(result) > 1):
 		print('DATA ERROR: Duplicate room numbers from getRoom('+roomID+').')
 	return result[0]
-	
+
+def getRoomNumber(room):
+	return room.roomNumber
+
 def getRes(rvtnID):
 	#rvtnID should be int
 	result = []
@@ -90,13 +94,7 @@ def getRes(rvtnID):
 	if (len(result) > 1):
 		print('DATA ERROR: Duplicate reservation numbers from getRes('+ str(rvtnID) +').')
 	return result[0]
-
-def getDirtyRooms():
-	hklist = []
-	for r in db.session.query(Room).filter_by(occupied=False,dirty=True):
-		hklist.append(r)
-	return hklist
-		
+	
 def getAllResForRoom(room):
 	roomNum = room.roomNumber
 	rvtns = []
@@ -109,6 +107,38 @@ def roomResListing(roomNum):
 	for rv in getAllResForRoom(getRoom(roomNum)):
 		rvtns.append(rv)
 	return rvtns
+#--------
+
+#----Reservation date accessors----
+def getResDates(rvtn):
+	return (rvtn.inDate, rvtn.outDate) # returns (checkin date, checkout date)
+
+def op_checkInOn(d=datetime.date.today()):
+	result = []
+	for rv in db.session.query(Reservation).filter_by(inDate=d):
+		result.append(rv)
+	return result
+	
+def op_checkOutOn(d=datetime.date.today()):
+	result = []
+	for rv in db.session.query(Reservation).filter_by(outDate=d):
+		result.append(rv)
+	return result
+#---------
+
+#----Housekeeping functions----
+def getDirtyRooms():
+	hklist = []
+	for r in db.session.query(Room).filter_by(occupied=False,clean=False):
+		hklist.append(r)
+	return hklist
+def cleaned(room, clean=True):
+	#change db value for room.clean to opposite of the clean parameter
+	pass
+#--------
+		
+
+	
 
 createTestRoom()
 createTestRes()
@@ -122,9 +152,8 @@ def res_page():
 @app.route('/op')
 def operations_page():
 	title = "Operations"
-	content = ""
-	for rv in roomResListing('100'):
-		 content += str(rv.inDate)
+	content = op_checkInOn()
+	
 	
 	return render_template('display.html',appname=appname,title=title,content=content)
 
@@ -132,10 +161,11 @@ def operations_page():
 def housekeeping_page():
 	title = "Housekeeping Overview"
 	content = "The following rooms need to be cleaned: "
-	for r in getDirtyRooms():
+	for r in getCleanRooms():
 		content += r.roomNumber
+	cleaned(getRoom('100'))
 	return render_template('display.html',appname=appname,title=title,content=content)
-	
+#--------
 
 #Pretty 404 page
 @app.errorhandler(404)
