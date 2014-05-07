@@ -59,7 +59,7 @@ def createTestRoom():
 	fakeRoom = Room()
 	fakeRoom.roomNumber = '100'
 	fakeRoom.occupancy = 2
-	fakeRoom.occupied = False
+	fakeRoom.occupied = True
 	fakeRoom.clean = False
 	db.session.add(fakeRoom)
 	db.session.commit()
@@ -69,6 +69,7 @@ def createTestRes():
 	fakeRes.resID = 1
 	fakeRes.roomNumber = '100'
 	fakeRes.inDate = datetime.date(2014,5,7)
+	fakeRes.outDate = datetime.date(2014,5,7)
 	db.session.add(fakeRes)
 	db.session.commit()
 #--------
@@ -146,7 +147,8 @@ def op_vacancies(includeRoomsWithIncomingRes=True,includeDirtyRooms=False):
 def op_occupied():
 	result = []
 	for rm in db.session.query(Room).filter_by(occupied=True):
-		return result
+		result.append(rm)
+	return result
 #---------
 
 #----Housekeeping functions----
@@ -175,9 +177,24 @@ def res_page():
 @app.route('/op')
 def operations_page():
 	title = "Operations"
-	content = op_checkInOn()
+	checkin = ""
+	for rv in op_checkInOn(datetime.date.today()):
+		checkin += '<a href="resinfo/' + str(rv.resID) + '">' + str(rv.resID) + '</a><br />'
+		
+	checkout = ""
+	for rv in op_checkOutOn(datetime.date.today()):
+		checkout += '<a href="resinfo/' + str(rv.resID) + '">' + str(rv.resID) + '</a><br />'
+ 
+	vacancies = ""
+	for rm in op_vacancies(False,True):
+		vacancies += '<a href="roominfo/' + rm.roomNumber + '">' + rm.roomNumber + '</a><br />'
 	
-	return render_template('operations.html',appname=appname,title=title,content=content)
+	occupied = ""
+	for rm in op_occupied():
+		occupied += '<a href="roominfo/' + rm.roomNumber + '">' + rm.roomNumber + '</a><br />'
+		
+	return render_template('operations.html',appname=appname,title=title,
+								checkin=checkin,checkout=checkout,vacant=vacancies,occupied=occupied)
 
 @app.route('/hk')
 def housekeeping_page():
