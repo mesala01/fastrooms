@@ -183,7 +183,7 @@ def operations_page():
 def housekeeping_page():
 	title = "Housekeeping Overview"
 	content = "The following rooms need to be cleaned: "
-	for r in getCleanRooms():
+	for r in getDirtyRooms():
 		content += r.roomNumber
 	cleaned(getRoom('100'))
 	return render_template('display.html',appname=appname,title=title,content=content)
