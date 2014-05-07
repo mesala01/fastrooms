@@ -124,6 +124,29 @@ def op_checkOutOn(d=datetime.date.today()):
 	for rv in db.session.query(Reservation).filter_by(outDate=d):
 		result.append(rv)
 	return result
+#--------
+
+#----Rooms Overview----
+def op_vacancies(includeRoomsWithIncomingRes=True,includeDirtyRooms=False):
+	result = []
+	if (includeDirtyRooms and includeRoomsWithIncomingRes):
+		for rm in db.session.query(Room).filter_by(occupied=False):
+			result.append(rm)
+	elif (includeDirtyRooms and (not includeRoomsWithIncomingRes)):
+		for rm in db.session.query(Room).filter_by(occupied=False): #ADD NEXT RES PART!!!! nextres!=today
+			result.append(rm)
+	elif ((not includeDirtyRooms) and includeRoomsWithIncomingRes):
+		for rm in db.session.query(Room).filter_by(occupied=False, clean=True): 
+			result.append(rm)
+	elif ((not includeDirtyRooms) and (not includeRoomsWithIncomingRes)):
+		for rm in db.session.query(Room).filter_by(occupied=False, clean=True): #ADD NEXT RES PART!!!! nextres!=today
+			result.append(rm)
+	return result
+
+def op_occupied():
+	result = []
+	for rm in db.session.query(Room).filter_by(occupied=True):
+		return result
 #---------
 
 #----Housekeeping functions----
@@ -154,8 +177,7 @@ def operations_page():
 	title = "Operations"
 	content = op_checkInOn()
 	
-	
-	return render_template('display.html',appname=appname,title=title,content=content)
+	return render_template('operations.html',appname=appname,title=title,content=content)
 
 @app.route('/hk')
 def housekeeping_page():
