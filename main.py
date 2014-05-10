@@ -2,14 +2,16 @@ from flask import *
 from jinja2 import Template
 from flask.ext.sqlalchemy import SQLAlchemy
 import datetime
+import config
+import re
 
 app = Flask(__name__)
 app.debug = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
 db = SQLAlchemy(app)
 
-appname = "FastRooms"
-build = "0.1"
+appname = config.appname
+build = config.build
 
 
 #----DATABASE TABLES----
@@ -36,7 +38,7 @@ class Guest(db.Model):
 	name = db.Column(db.String)
 	address = db.Column(db.String)
 	phone = db.Column(db.String)
-
+ 
 db.drop_all()
 db.create_all()
 
@@ -69,7 +71,7 @@ def createTestRes():
 	fakeRes.resID = 1
 	fakeRes.roomNumber = '100'
 	fakeRes.inDate = datetime.date(2014,5,7)
-	fakeRes.outDate = datetime.date(2014,5,7)
+	fakeRes.outDate = datetime.date(2014,5,9)
 	db.session.add(fakeRes)
 	db.session.commit()
 #--------
@@ -169,6 +171,13 @@ createTestRoom()
 createTestRes()
 
 #----PAGES----
+@app.route('/')
+def home_page():
+	title = "Home"
+	content = "links here"
+	return render_template('display.html',appname=appname,title=title,content=content)
+
+
 @app.route('/res')
 def res_page():
 	title = "Reservations"
@@ -196,6 +205,18 @@ def operations_page():
 	return render_template('operations.html',appname=appname,title=title,
 								checkin=checkin,checkout=checkout,vacant=vacancies,occupied=occupied)
 
+@app.route('/roominfo/<myroom>')
+def room_info_page(myroom):
+	rm = getRoom(myroom)
+	title = "Room " + rm.roomNumber
+	return render_template('display.html',appname=appname,title=title)
+	
+@app.route('/resinfo/<myres>')
+def res_info_page(myres):
+	rv = getRes(int(myres))
+	title = "Reservation Lookup: " + str(rv.resID)
+	return render_template('display.html',appname=appname,title=title)
+	
 @app.route('/hk')
 def housekeeping_page():
 	title = "Housekeeping Overview"
