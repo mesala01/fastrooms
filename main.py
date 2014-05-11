@@ -3,7 +3,7 @@ from jinja2 import Template
 from flask.ext.sqlalchemy import SQLAlchemy
 import datetime
 import config
-import re
+import forms
 
 app = Flask(__name__)
 app.debug = True
@@ -31,6 +31,10 @@ class Room(db.Model):
     occupancy = db.Column(db.Integer)
     occupied = db.Column(db.Boolean)
     clean = db.Column(db.Boolean)
+
+class Building(db.Model):
+	__tablename__ = 'building'
+	name = db.Column(db.String, primary_key=True)
 
 class Guest(db.Model):
 	__tablename__ = 'guests'
@@ -70,8 +74,8 @@ def createTestRes():
 	fakeRes = Reservation()
 	fakeRes.resID = 1
 	fakeRes.roomNumber = '100'
-	fakeRes.inDate = datetime.date(2014,5,7)
-	fakeRes.outDate = datetime.date(2014,5,9)
+	fakeRes.inDate = datetime.date(2014,5,10)
+	fakeRes.outDate = datetime.date(2014,5,19)
 	db.session.add(fakeRes)
 	db.session.commit()
 #--------
@@ -174,7 +178,7 @@ createTestRes()
 @app.route('/')
 def home_page():
 	title = "Home"
-	content = "links here"
+	content = 'links here'
 	return render_template('display.html',appname=appname,title=title,content=content)
 
 
@@ -204,6 +208,11 @@ def operations_page():
 		
 	return render_template('operations.html',appname=appname,title=title,
 								checkin=checkin,checkout=checkout,vacant=vacancies,occupied=occupied)
+
+@app.route('/addroom')
+def add_room_page():
+	form = forms.addRoom()
+	return render_template('form.html',appname=appname,form=form)
 
 @app.route('/roominfo/<myroom>')
 def room_info_page(myroom):
