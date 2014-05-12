@@ -78,8 +78,29 @@ def createTestRes():
 	fakeRes.outDate = datetime.date.today()
 	db.session.add(fakeRes)
 	db.session.commit()
+	
+def createTestGuest():
+	pass
 #--------
 
+#----Database Adders----
+def addBuilding(name):
+	b = Building()
+	b.name = name
+	db.session.add(b)
+	db.session.commit()
+
+def addRoom(num,bld,occ):
+	r = Room()
+	r.roomNumber = num
+	r.building = bld
+	r.occupancy = int(occ)
+	r.occupied = False
+	r.clean = True
+	db.session.add(r)
+	db.session.commit() 
+
+#-------
 #----Database Accessors----
 def getRoom(roomID):
 	#roomID should be str
@@ -152,8 +173,6 @@ def getAvailableRoomsBetween(checkIn=datetime.date.today(),checkOut=datetime.dat
 			goodRoom.append(rm)
 						
 	return goodRoom #returns room objects
-	
-	
 #--------
 
 #----Rooms Overview----
@@ -196,6 +215,7 @@ def cleaned(room, clean=True):
 
 createTestRoom()
 createTestRes()
+createTestGuest()
 
 #----PAGES----
 @app.route('/')
@@ -208,7 +228,6 @@ def home_page():
 @app.route('/res')
 def res_page():
 	title = "Reservations"
-	content = getAvailableRoomsBetween(
 	return render_template('display.html',appname=appname,title=title,content=content)
 
 @app.route('/op')
@@ -224,21 +243,37 @@ def operations_page():
  
 	vacancies = ""
 	for rm in op_vacancies(False,True):
-		vacancies += '<a href="roominfo/' + rm.roomNumber + '">' + rm.roomNumber + '</a><br />'
+		vacancies += '<a href="room/' + rm.roomNumber + '">' + rm.roomNumber + '</a><br />'
 	
 	occupied = ""
 	for rm in op_occupied():
-		occupied += '<a href="roominfo/' + rm.roomNumber + '">' + rm.roomNumber + '</a><br />'
+		occupied += '<a href="room/' + rm.roomNumber + '">' + rm.roomNumber + '</a><br />'
 		
 	return render_template('operations.html',appname=appname,title=title,
 								checkin=checkin,checkout=checkout,vacant=vacancies,occupied=occupied)
 
-@app.route('/addroom')
-def add_room_page():
+@app.route('/room', methods=['GET','POST'])
+def room_page():
+	if request.method == 'POST':
+		addRoom(request.form['roomNumber'],request.form['building'],request.form['occupancy'])
+		
 	form = forms.addRoom()
-	return render_template('form.html',appname=appname,form=form)
+	return render_template('room.html',appname=appname,form=form)
 
-@app.route('/roominfo/<myroom>')
+@app.route('/building', methods=['GET', 'POST'])
+def building_page():
+	if request.method == 'POST':
+		addBuilding(request.form['building'])
+	form = forms.addBuilding()
+	buildings = db.session.query(Building)
+	return render_template('building.html',appname=appname,form=form,buildings=buildings)
+
+@app.route('/addguest')
+def add_guest_page():
+	pass
+
+
+@app.route('/room/<myroom>')
 def room_info_page(myroom):
 	rm = getRoom(myroom)
 	title = "Room " + str(rm.roomNumber)

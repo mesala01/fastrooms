@@ -1,0 +1,15 @@
+{% extends "display.html" %}
+
+{% block body1 %}
+
+<form method="POST" action="/room">
+    {{ form.csrf_token }}
+    {{ form.roomNumber.label }} {{ form.roomNumber(size=8) }} <br />
+    {{ form.building.label }} {{ form.building(size=12) }} <br />
+    {{ form.occupancy.label }} {{ form.occupancy(size=2) }}<br />
+    <input type="submit" value="Add">
+</form>
+
+<hr />
+
+{% endblock %}

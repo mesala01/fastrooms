@@ -37,16 +37,6 @@ def roomsearch():
 
 
 
-def roomsAvailable(checkIn=datetime.date.today(),checkOut=datetime.date.today()):
-	rez = Reservation.query.filter(not Reservation.inDate.between(checkIn,checkOut).all()
-	content
-	for r in rez:
-		content += str(r.roomNumber)
-	
-
-
-
-
 
 
 
