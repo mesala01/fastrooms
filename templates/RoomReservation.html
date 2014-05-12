@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel= "stylesheet" type="text/css" href="{{ url_for('static', filename='styleReservation.css') }}">
+  </head>
+   <body>
+    <div class="container">
+      <div class="header">
+  	  <h3 class="text-muted" style="color:black;">Room Reservation</h3>
+   		</div>
+   		<hr/>
+   		{% if errors %}
+   			<div class="alert alert-danger">
+   				{{ errors }}
+   			 </div>
+   		{% endif %}
+   	   <form class="form-horizontal" action="." method="post">
+   	   		
+   	   		Check In: <input type="date" name="CheckIn" required> 
+   	   		<br />	
+   	   	
+   	   		Check Out: <input type="date" name="CheckOut" required> 
+   	   		<br />
+     
+   	
+   	   		<select name="numberOfRooms" required>
+            <option value="" selected>Number of Rooms </option>
+   	   			<option value="1">1 </option>
+   	   			<option value="1">2 </option>
+   	   			<option value="1">3 </option>
+   	   			<option value="1">4 </option>
+   	   			<option value="1">5+ </option>
+   	   		</select>
+   	   		<br />
+	    	<input type="submit" class="btn btn-large btn-primary" value="Check-Availibity">
+	  </div>
+	 
+
+   	 
+   	   	</form>
+   	   </body>
+   	   </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

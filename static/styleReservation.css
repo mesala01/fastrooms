@@ -1,0 +1,58 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  -webkit-box-sizing:border-box;
+  -moz-box-sizing:border-box;
+  box-sizing:border-box;
+  background: #FFE4B5; 
+}
+h3{
+  font-color:blue;
+  font-family:Verdana;
+  font-size: 40px;
+}
+html{
+  padding:8px;
+}
+.container{
+  padding-top: 20px;
+  border-style: double;
+  height: 600px;
+  width: 500px;
+  float: center;
+  background-color:#5F9EA0;
+}
+#checkIn{
+  border-style: double;
+  height: 30px;
+  width: 320px;
+
+}
+#checkOut{
+  border-style: double;
+  padding-top: 30px;
+  height: 20px;
+  width: 300px;
+}
+
+#rooms{
+  padding-top: 40px;
+  border-style: double;
+  height: 20px;
+  width: 400px;
+  float:left;
+  
+}
+#submit{
+  padding-top: 100px;
+  padding-left: 60px;
+  height: 20px;
+  width: 400px;
+  float:left;
+}
+.terminal {
+  font-family: "DejaVu Sans Mono", "Liberation Mono", monospace;
+  font-size: 11px;
+  display: inline-block;
+  background: #383734 !important; 

@@ -217,8 +217,20 @@ def add_room_page():
 @app.route('/roominfo/<myroom>')
 def room_info_page(myroom):
 	rm = getRoom(myroom)
-	title = "Room " + rm.roomNumber
-	return render_template('display.html',appname=appname,title=title)
+	title = "Room " + str(rm.roomNumber)
+	content = "Building: " + str(rm.building) + "<br />"
+	content += "Occupancy: " + str(rm.occupancy) + "<br />"
+	content += "<hr />"
+	if (rm.occupied):
+		content += "Occupied <br />"
+	else:
+		content += "Vacant <br />"
+	if (rm.clean):
+		content += "Clean <br />"
+	else:
+		content += "Dirty <br />"
+
+	return render_template('display.html',appname=appname,title=title,content=content)
 	
 @app.route('/resinfo/<myres>')
 def res_info_page(myres):
