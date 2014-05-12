@@ -74,8 +74,8 @@ def createTestRes():
 	fakeRes = Reservation()
 	fakeRes.resID = 1
 	fakeRes.roomNumber = '100'
-	fakeRes.inDate = datetime.date(2014,5,10)
-	fakeRes.outDate = datetime.date(2014,5,19)
+	fakeRes.inDate = datetime.date(2014,4,12)
+	fakeRes.outDate = datetime.date.today()
 	db.session.add(fakeRes)
 	db.session.commit()
 #--------
@@ -131,6 +131,29 @@ def op_checkOutOn(d=datetime.date.today()):
 	for rv in db.session.query(Reservation).filter_by(outDate=d):
 		result.append(rv)
 	return result
+	
+	
+def daterange(start, end):
+    r = (end-start).days
+    return [start+datetime.timedelta(days=i) for i in range(r)]
+def getAvailableRoomsBetween(checkIn=datetime.date.today(),checkOut=datetime.date(2014,5,16)):
+	allRooms = Room.query.filter().all()
+	content = ""
+	goodRoom = []
+	for rm in allRooms:
+		conflict = False
+		for res in getAllResForRoom(rm):
+			resRange = daterange(res.inDate, res.outDate)
+			testRange = daterange(checkIn, checkOut)
+			for testDate in testRange:
+				if testDate in resRange:
+					conflict = True
+		if (conflict == False):
+			goodRoom.append(rm)
+						
+	return goodRoom #returns room objects
+	
+	
 #--------
 
 #----Rooms Overview----
@@ -185,7 +208,8 @@ def home_page():
 @app.route('/res')
 def res_page():
 	title = "Reservations"
-	return render_template('display.html',appname=appname,title=title)
+	content = getAvailableRoomsBetween(
+	return render_template('display.html',appname=appname,title=title,content=content)
 
 @app.route('/op')
 def operations_page():
@@ -246,6 +270,11 @@ def housekeeping_page():
 		content += r.roomNumber
 	cleaned(getRoom('100'))
 	return render_template('display.html',appname=appname,title=title,content=content)
+	
+	
+
+ 
+        
 #--------
 
 #Pretty 404 page

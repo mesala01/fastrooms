@@ -6,7 +6,7 @@ from flask import Flask, session, request, render_template
 app=Flask(__name__)
 # Generate a random secret key for the session
 app.secret_key = os.urandom(30)
-# This view method responds to the URL / for the methods GET and POST
+
 @app.route('/roomsearch', methods=['GET','POST'])
 def roomsearch():
 	 # Initialize the errors variable to empty string. We will have the error messages
@@ -34,6 +34,23 @@ def roomsearch():
                     'numberOfRooms' : numberOfRooms
                     }
         return render_template('display.html',appname=appname,title=title, errors=errors)
+
+
+
+def roomsAvailable(checkIn=datetime.date.today(),checkOut=datetime.date.today()):
+	rez = Reservation.query.filter(not Reservation.inDate.between(checkIn,checkOut).all()
+	content
+	for r in rez:
+		content += str(r.roomNumber)
+	
+
+
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
