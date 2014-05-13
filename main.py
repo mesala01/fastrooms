@@ -45,8 +45,14 @@ class Guest(db.Model):
 	address = db.Column(db.String)
 	phone = db.Column(db.String)
  
-db.drop_all()
-db.create_all()
+@app.route('/drop')
+def droptables():
+	db.drop_all()
+	db.create_all()
+	createTestRoom()
+	createTestRes()
+	createTestGuest()
+	return render_template('display.html',title="Tables erased.")
 
 #class RoomRes(db.Model): #secondary table. Matches rooms with res
 #	__tablename__ = 'roomres'
@@ -98,11 +104,11 @@ def addRoom(num,bld,occ):
 	r.building = bld
 	r.occupancy = int(occ)
 	r.occupied = False
-	r.clean = True
+	r.clean = False
 	db.session.add(r)
 	db.session.commit() 
-
 #-------
+
 #----Database Accessors----
 def getRoom(roomID):
 	#roomID should be str
@@ -207,17 +213,15 @@ def getDirtyRooms():
 	for r in db.session.query(Room).filter_by(occupied=False,clean=False):
 		hklist.append(r)
 	return hklist
+	
 def cleaned(room, clean=True):
 	#change db value for room.clean to opposite of the clean parameter
-	pass
+	room.clean=clean
+	db.session.commit()
 #--------
 		
 
-	
 
-createTestRoom()
-createTestRes()
-createTestGuest()
 
 #----PAGES----
 @app.route('/', methods=['GET','POST'])
@@ -260,7 +264,8 @@ def room_page():
 		addRoom(request.form['roomNumber'],request.form['building'],request.form['occupancy'])
 		
 	form = forms.addRoom()
-	return render_template('room.html',appname=appname,form=form)
+	rooms = db.session.query(Room)
+	return render_template('room.html',appname=appname,form=form,rooms=rooms)
 
 @app.route('/building', methods=['GET', 'POST'])
 def building_page():
@@ -290,7 +295,6 @@ def room_info_page(myroom):
 		content += "Clean <br />"
 	else:
 		content += "Dirty <br />"
-
 	return render_template('display.html',appname=appname,title=title,content=content)
 	
 @app.route('/resinfo/<myres>')
@@ -305,7 +309,6 @@ def housekeeping_page():
 	content = "The following rooms need to be cleaned: "
 	for r in getDirtyRooms():
 		content += r.roomNumber
-	cleaned(getRoom('100'))
 	return render_template('display.html',appname=appname,title=title,content=content)
 	
 	
@@ -328,6 +331,14 @@ def roomsearch():
 	return render_template('RoomReservation.html',appname=appname,title=title)
 
 #--------
+
+@app.route('/config')
+def config_page():
+	content = '<a href="/room">Rooms</a><br />'
+	content += '<a href="/building">Building</a><br />'
+	content += '<br /><em><a href="/drop">Drop and rebuild database (CAUTION: Erases all data)</a></em><br />'
+	return render_template('display.html',appname=appname,title="Configuration",content=content)
+
 
 #Pretty 404 page
 @app.errorhandler(404)
