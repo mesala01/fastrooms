@@ -4,8 +4,10 @@ from flask.ext.sqlalchemy import SQLAlchemy
 import datetime
 import config
 import forms
+import os
 
 app = Flask(__name__)
+app.secret_key = os.urandom(30)
 app.debug = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
 db = SQLAlchemy(app)
@@ -218,7 +220,7 @@ createTestRes()
 createTestGuest()
 
 #----PAGES----
-@app.route('/')
+@app.route('/', methods=['GET','POST'])
 def home_page():
 	title = "Home"
 	content = 'links here'
@@ -307,9 +309,24 @@ def housekeeping_page():
 	return render_template('display.html',appname=appname,title=title,content=content)
 	
 	
+@app.route('/roomsearch', methods=['GET','POST'])
+def roomsearch():
+	title = "Room Availability Search"
+	errors = ''
+	if request.method == "POST":
+		checkInS = request.form['checkIn']
+		checkOutS = request.form['checkOut']
+		numberOfRooms = request.form['numberOfRooms']
+		if not checkInS or not checkOutS or not numberOfRooms:
+			errors = "Please enter all the fields."
+		if not errors:
+			checkInD = datetime.datetime.strptime(checkInS,'%Y/%m/%d').date()
+			checkOutD = datetime.datetime.strptime(checkOutS,'%Y/%m/%d').date()
+			rooms = getAvailableRoomsBetween(checkInD,checkOutD)
+			return render_template('RoomReservation.html',appname=appname,title=title,errors=errors,rooms=rooms)
+		return render_template('RoomReservation.html',appname=appname,title=title,errors=errors)
+	return render_template('RoomReservation.html',appname=appname,title=title)
 
- 
-        
 #--------
 
 #Pretty 404 page
