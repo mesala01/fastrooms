@@ -40,7 +40,7 @@
    	   	
    	   	<hr />
    	   	{% for r in rooms %}
-		<li>{{ r.roomNumber }}</li>
+		<a class="btn" href="/createres/{{ r.roomNumber }}"> {{ r.roomNumber }} </a>
 		{% endfor %}
    	{% endblock %}
 

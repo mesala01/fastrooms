@@ -11,5 +11,10 @@
 </form>
 
 <hr />
-
+<h2> Rooms </h2>
+	<ul>
+	{% for r in rooms %}
+		<li>{{ r.roomNumber }}</li>
+	{% endfor %}
+	</ul>
 {% endblock %}
