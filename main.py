@@ -146,16 +146,16 @@ def getResDates(rvtn):
 	return (rvtn.inDate, rvtn.outDate) # returns (checkin date, checkout date)
 
 def op_checkInOn(d=datetime.date.today()):
-	result = []
+	reservations = []
 	for rv in db.session.query(Reservation).filter_by(inDate=d):
-		result.append(rv)
-	return result
+		reservations.append(rv)
+	return reservations
 	
 def op_checkOutOn(d=datetime.date.today()):
-	result = []
+	reservations = []
 	for rv in db.session.query(Reservation).filter_by(outDate=d):
-		result.append(rv)
-	return result
+		reservations.append(rv)
+	return reservations
 	
 	
 def daterange(start, end):
@@ -370,7 +370,15 @@ def config_page():
 #Pretty 404 page
 @app.errorhandler(404)
 def error404(e):
-	return render_template('404.html',appname=appname,build=build), 404
+	desc="It looks like the page you were looking for doesn't exist or has been moved.<br />Sorry about that!"
+	head="404 - Page Not Found"
+	return render_template('404.html',appname=appname,build=build,desc=desc,head=head), 404
+
+@app.errorhandler(500)
+def error500(e):
+	desc="Something major has gone wrong. You should check your log files."
+	head="500 - Database error"
+	return render_template('404.html',appname=appname,build=build,desc=desc,head=head), 500
 	
 if __name__ == '__main__':
 	app.run()
