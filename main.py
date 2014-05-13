@@ -98,11 +98,16 @@ def addBuilding(name):
 	db.session.add(b)
 	db.session.commit()
 
-def addRoom(num,bld,occ):
+def addRoom(num,bldg,occ):
 	r = Room()
 	r.roomNumber = num
-	r.building = bld
-	r.occupancy = int(occ)
+	r.building = bldg
+	try:
+		r.occupancy = int(occ)
+	except:
+		pass
+	if not r.occupancy:
+		r.occupancy = 4
 	r.occupied = False
 	r.clean = False
 	db.session.add(r)
@@ -119,9 +124,6 @@ def getRoom(roomID):
 		print('DATA ERROR: Duplicate room numbers from getRoom('+roomID+').')
 	return result[0]
 
-def getRoomNumber(room):
-	return room.roomNumber
-
 def getRes(rvtnID):
 	#rvtnID should be int
 	result = []
@@ -135,12 +137,6 @@ def getAllResForRoom(room):
 	roomNum = room.roomNumber
 	rvtns = []
 	for rv in db.session.query(Reservation).filter_by(roomNumber=roomNum):
-		rvtns.append(rv)
-	return rvtns
-	
-def roomResListing(roomNum):
-	rvtns = []
-	for rv in getAllResForRoom(getRoom(roomNum)):
 		rvtns.append(rv)
 	return rvtns
 #--------
@@ -205,6 +201,26 @@ def op_occupied():
 	for rm in db.session.query(Room).filter_by(occupied=True):
 		result.append(rm)
 	return result
+
+def occupied(room):
+	room.occupied = True
+	cleaned(room,False)
+	db.session.commit()
+	
+def vacant(room):
+	room.occupied = False
+	db.session.commit()
+
+@app.route('/room/<roomNumber>/occupied')
+def manuallyOccupied_page(roomNumber):
+	occupied(getRoom(roomNumber))
+	return redirect('/op')
+@app.route('/room/<roomNumber>/vacant')
+def manuallyVacant_page(roomNumber):
+	vacant(getRoom(roomNumber))
+	return redirect('/op')
+	
+	
 #---------
 
 #----Housekeeping functions----
@@ -218,6 +234,17 @@ def cleaned(room, clean=True):
 	#change db value for room.clean to opposite of the clean parameter
 	room.clean=clean
 	db.session.commit()
+@app.route('/room/<roomNumber>/clean')
+def clean_page(roomNumber):
+	room = getRoom(roomNumber)
+	cleaned(room)
+	return redirect('/hk')
+
+@app.route('/room/<roomNumber>/dirty')
+def dirty_page(roomNumber):
+	room = getRoom(roomNumber)
+	cleaned(room,False)
+	return redirect('/hk')
 #--------
 		
 
@@ -308,7 +335,7 @@ def housekeeping_page():
 	title = "Housekeeping Overview"
 	content = "The following rooms need to be cleaned: "
 	for r in getDirtyRooms():
-		content += r.roomNumber
+		content += "<br /> <a href=\"/room/" + r.roomNumber +"/clean\">" +r.roomNumber
 	return render_template('display.html',appname=appname,title=title,content=content)
 	
 	
