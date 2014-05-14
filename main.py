@@ -14,6 +14,15 @@ db = SQLAlchemy(app)
 
 appname = config.appname
 build = config.build
+site = config.sitename
+@app.context_processor
+def inject_globals():
+    return dict(
+        appname = appname,
+		build = build,
+		site = site
+    )
+
 
 
 #----DATABASE TABLES----
@@ -254,13 +263,13 @@ def dirty_page(roomNumber):
 @app.route('/', methods=['GET','POST'])
 def home_page():
 	title = "Home"
-	return render_template('basic.html',appname=appname,title=title)
+	return render_template('basic.html',title=title)
 
 
 @app.route('/res')
 def res_page():
 	title = "Reservations"
-	return render_template('basic.html',appname=appname,title=title,content=content)
+	return render_template('basic.html',title=title,content=content)
 
 @app.route('/op')
 def operations_page():
@@ -281,7 +290,7 @@ def operations_page():
 	for rm in op_occupied():
 		occupied += '<a href="room/' + rm.roomNumber + '">' + rm.roomNumber + '</a><br />'
 		
-	return render_template('operations.html',appname=appname,title=title,
+	return render_template('operations.html',title=title,
 								checkin=checkin,checkout=checkout,vacant=vacancies,occupied=occupied)
 
 @app.route('/room', methods=['GET','POST'])
@@ -291,7 +300,7 @@ def room_page():
 		
 	form = forms.addRoom()
 	rooms = db.session.query(Room)
-	return render_template('room.html',appname=appname,form=form,rooms=rooms)
+	return render_template('room.html',form=form,rooms=rooms)
 
 @app.route('/building', methods=['GET', 'POST'])
 def building_page():
@@ -299,7 +308,7 @@ def building_page():
 		addBuilding(request.form['building'])
 	form = forms.addBuilding()
 	buildings = db.session.query(Building)
-	return render_template('building.html',appname=appname,form=form,buildings=buildings)
+	return render_template('building.html',form=form,buildings=buildings)
 
 @app.route('/addguest')
 def add_guest_page():
@@ -321,13 +330,13 @@ def room_info_page(myroom):
 # 		content += "Clean <br />"
 # 	else:
 # 		content += "Dirty <br />"
-	return render_template('roominfo.html',appname=appname,title=title,r=rm)
+	return render_template('roominfo.html',title=title,r=rm)
 	
 @app.route('/resinfo/<myres>')
 def res_info_page(myres):
 	rv = getRes(int(myres))
 	title = "Reservation Lookup: " + str(rv.resID)
-	return render_template('basic.html',appname=appname,title=title)
+	return render_template('basic.html',title=title)
 	
 @app.route('/hk')
 def housekeeping_page():
@@ -335,7 +344,7 @@ def housekeeping_page():
 	content = "The following rooms need to be cleaned: "
 	for r in getDirtyRooms():
 		content += "<br /> <a href=\"/room/" + r.roomNumber +"/clean\">" +r.roomNumber
-	return render_template('basic.html',appname=appname,title=title,content=content)
+	return render_template('basic.html',title=title,content=content)
 	
 	
 @app.route('/roomsearch', methods=['GET','POST'])
@@ -352,9 +361,9 @@ def roomsearch():
 			checkInD = datetime.datetime.strptime(checkInS,'%Y/%m/%d').date()
 			checkOutD = datetime.datetime.strptime(checkOutS,'%Y/%m/%d').date()
 			rooms = getAvailableRoomsBetween(checkInD,checkOutD)
-			return render_template('RoomReservation.html',appname=appname,title=title,errors=errors,rooms=rooms)
-		return render_template('RoomReservation.html',appname=appname,title=title,errors=errors)
-	return render_template('RoomReservation.html',appname=appname,title=title)
+			return render_template('RoomReservation.html',title=title,errors=errors,rooms=rooms)
+		return render_template('RoomReservation.html',title=title,errors=errors)
+	return render_template('RoomReservation.html',title=title)
 
 #--------
 
@@ -363,7 +372,7 @@ def config_page():
 	content = '<a href="/room">Rooms</a><br />'
 	content += '<a href="/building">Building</a><br />'
 	content += '<br /><em><a href="/drop">Drop and rebuild database (CAUTION: Erases all data)</a></em><br />'
-	return render_template('basic.html',appname=appname,title="Configuration",content=content)
+	return render_template('basic.html',title="Configuration",content=content)
 
 
 #Pretty 404 page
@@ -371,13 +380,13 @@ def config_page():
 def error404(e):
 	desc="It looks like the page you were looking for doesn't exist or has been moved.<br />Sorry about that!"
 	head="404 - Page Not Found"
-	return render_template('404.html',appname=appname,build=build,desc=desc,head=head), 404
+	return render_template('404.html',desc=desc,head=head), 404
 
 @app.errorhandler(500)
 def error500(e):
 	desc="Something major has gone wrong. You should check your log files. 500 INTERNAL SERVER ERROR"
 	head="500 - Database error"
-	return render_template('404.html',appname=appname,build=build,desc=desc,head=head), 500
+	return render_template('404.html',desc=desc,head=head), 500
 	
 if __name__ == '__main__':
 	app.run()
