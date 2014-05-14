@@ -42,7 +42,11 @@
    	   	{% for r in rooms %}
 		<a class="btn" href="/createres/{{ r.roomNumber }}"> {{ r.roomNumber }} </a>
 		{% endfor %}
-   	{% endblock %}
+		{% if rooms|length == 0 %}
+			<p>No available rooms found.</p>
+		{% endif %}
+		
+{% endblock %}
 
 
 
