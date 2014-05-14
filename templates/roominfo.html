@@ -1,7 +1,7 @@
 {% extends "display.html" %}
 
 {% block body1 %}
-
+	<div class="well">
 	<table style="width:300px">
 		<tr>
 			<td>Building:</td>
@@ -14,20 +14,22 @@
 		<tr>
 			{% if r.occupied %}
 				<td><strong>Occupied</strong></td>
-				<td><a href="/room/{{ r.roomNumber }}/vacant">Mark as vacant</a></td>
+				<td><a href="/room/{{ r.roomNumber }}/vacant"><button type="button" class="btn btn-sm btn-danger">Mark as vacant</button></a></td>
 			{% else %}
 				<td><strong>Vacant</strong></td>
-				<td><a href="/room/{{ r.roomNumber }}/occupied">Mark as occupied</a></td>
+				<td><a href="/room/{{ r.roomNumber }}/occupied"><button type="button" class="btn btn-sm btn-success">Mark as occupied</button></a></td>
 			{% endif %}
 		</tr>
 		<tr>
 			{% if r.clean %}
 				<td><strong>Clean</strong></td>
-				<td><a href="/room/{{ r.roomNumber }}/dirty">Mark as dirty</a></td>
+				<td><a href="/room/{{ r.roomNumber }}/dirty"><button type="button" class="btn btn-sm btn-warning">Mark as dirty</button></a></td>
 			{% else %}
 				<td><strong>Dirty</strong></td>
-				<td><a href="/room/{{ r.roomNumber }}/clean">Mark as clean</a></td>
+				<td><a href="/room/{{ r.roomNumber }}/clean"><button type="button" class="btn btn-sm btn-info">Mark as clean</button></a></td>
 			{% endif %}
 		</tr>
 	</table>
+	</div>
+	<a href="/op">Operations Page</a> | <a href="/room">Room Configuration</a>
 {% endblock%}
