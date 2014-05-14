@@ -1,0 +1,33 @@
+{% extends "display.html" %}
+
+{% block body1 %}
+
+	<table style="width:300px">
+		<tr>
+			<td>Building:</td>
+			<td>{{ r.building }}</td>
+		</tr>
+		<tr>
+			<td>Occupancy:</td>
+			<td>{{ r.occupancy }}</td>
+		</tr>
+		<tr>
+			{% if r.occupied %}
+				<td><strong>Occupied</strong></td>
+				<td><a href="/room/{{ r.roomNumber }}/vacant">Mark as vacant</a></td>
+			{% else %}
+				<td><strong>Vacant</strong></td>
+				<td><a href="/room/{{ r.roomNumber }}/occupied">Mark as occupied</a></td>
+			{% endif %}
+		</tr>
+		<tr>
+			{% if r.clean %}
+				<td><strong>Clean</strong></td>
+				<td><a href="/room/{{ r.roomNumber }}/dirty">Mark as dirty</a></td>
+			{% else %}
+				<td><strong>Dirty</strong></td>
+				<td><a href="/room/{{ r.roomNumber }}/clean">Mark as clean</a></td>
+			{% endif %}
+		</tr>
+	</table>
+{% endblock%}

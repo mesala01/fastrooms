@@ -214,11 +214,11 @@ def vacant(room):
 @app.route('/room/<roomNumber>/occupied')
 def manuallyOccupied_page(roomNumber):
 	occupied(getRoom(roomNumber))
-	return redirect('/op')
+	return redirect(request.referrer or '/op')
 @app.route('/room/<roomNumber>/vacant')
 def manuallyVacant_page(roomNumber):
 	vacant(getRoom(roomNumber))
-	return redirect('/op')
+	return redirect(request.referrer or '/op')
 	
 	
 #---------
@@ -238,13 +238,13 @@ def cleaned(room, clean=True):
 def clean_page(roomNumber):
 	room = getRoom(roomNumber)
 	cleaned(room)
-	return redirect('/hk')
+	return redirect(request.referrer or '/op')
 
 @app.route('/room/<roomNumber>/dirty')
 def dirty_page(roomNumber):
 	room = getRoom(roomNumber)
 	cleaned(room,False)
-	return redirect('/hk')
+	return redirect(request.referrer or '/op')
 #--------
 		
 
@@ -311,18 +311,18 @@ def add_guest_page():
 def room_info_page(myroom):
 	rm = getRoom(myroom)
 	title = "Room " + str(rm.roomNumber)
-	content = "Building: " + str(rm.building) + "<br />"
-	content += "Occupancy: " + str(rm.occupancy) + "<br />"
-	content += "<hr />"
-	if (rm.occupied):
-		content += "Occupied <br />"
-	else:
-		content += "Vacant <br />"
-	if (rm.clean):
-		content += "Clean <br />"
-	else:
-		content += "Dirty <br />"
-	return render_template('display.html',appname=appname,title=title,content=content)
+# 	content = "Building: " + str(rm.building) + "<br />"
+# 	content += "Occupancy: " + str(rm.occupancy) + "<br />"
+# 	content += "<hr />"
+# 	if (rm.occupied):
+# 		content += "Occupied <br />"
+# 	else:
+# 		content += "Vacant <br />"
+# 	if (rm.clean):
+# 		content += "Clean <br />"
+# 	else:
+# 		content += "Dirty <br />"
+	return render_template('roominfo.html',appname=appname,title=title,r=rm)
 	
 @app.route('/resinfo/<myres>')
 def res_info_page(myres):
