@@ -371,7 +371,6 @@ def roomsearch():
 def config_page():
 	content = '<a href="/room">Rooms</a><br />'
 	content += '<a href="/building">Building</a><br />'
-	content += '<a href="/config/company">Company</a><br />'
 	content += '<br /><em><a href="/drop">Drop and rebuild database (CAUTION: Erases all data)</a></em><br />'
 	return render_template('basic.html',title="Configuration",content=content)
 
