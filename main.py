@@ -52,7 +52,7 @@ def droptables():
 	createTestRoom()
 	createTestRes()
 	createTestGuest()
-	return render_template('display.html',title="Tables erased.")
+	return render_template('basic.html',title="Tables erased.")
 
 #class RoomRes(db.Model): #secondary table. Matches rooms with res
 #	__tablename__ = 'roomres'
@@ -254,14 +254,13 @@ def dirty_page(roomNumber):
 @app.route('/', methods=['GET','POST'])
 def home_page():
 	title = "Home"
-	content = 'links here'
-	return render_template('display.html',appname=appname,title=title,content=content)
+	return render_template('basic.html',appname=appname,title=title)
 
 
 @app.route('/res')
 def res_page():
 	title = "Reservations"
-	return render_template('display.html',appname=appname,title=title,content=content)
+	return render_template('basic.html',appname=appname,title=title,content=content)
 
 @app.route('/op')
 def operations_page():
@@ -328,7 +327,7 @@ def room_info_page(myroom):
 def res_info_page(myres):
 	rv = getRes(int(myres))
 	title = "Reservation Lookup: " + str(rv.resID)
-	return render_template('display.html',appname=appname,title=title)
+	return render_template('basic.html',appname=appname,title=title)
 	
 @app.route('/hk')
 def housekeeping_page():
@@ -336,7 +335,7 @@ def housekeeping_page():
 	content = "The following rooms need to be cleaned: "
 	for r in getDirtyRooms():
 		content += "<br /> <a href=\"/room/" + r.roomNumber +"/clean\">" +r.roomNumber
-	return render_template('display.html',appname=appname,title=title,content=content)
+	return render_template('basic.html',appname=appname,title=title,content=content)
 	
 	
 @app.route('/roomsearch', methods=['GET','POST'])
@@ -364,7 +363,7 @@ def config_page():
 	content = '<a href="/room">Rooms</a><br />'
 	content += '<a href="/building">Building</a><br />'
 	content += '<br /><em><a href="/drop">Drop and rebuild database (CAUTION: Erases all data)</a></em><br />'
-	return render_template('display.html',appname=appname,title="Configuration",content=content)
+	return render_template('basic.html',appname=appname,title="Configuration",content=content)
 
 
 #Pretty 404 page

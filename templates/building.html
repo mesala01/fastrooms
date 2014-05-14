@@ -2,7 +2,7 @@
 
 {% block body1 %}
 
-<form method="POST" action="/building">
+<form class="well" method="POST" action="/building">
 	{{ form.csrf_token }}
     {{ form.building.label }} {{ form.building(size=12) }}
     <input type="submit" value="Add">
