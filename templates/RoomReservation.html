@@ -20,11 +20,11 @@
    	   	
    	   		Check Out: <input type="date" name="checkOut" required> 
    	   		<br />
-     
-   	   		<select name="numberOfRooms" required>
-            <option value="" selected>Number of Rooms </option>
+     		
+     		Number of Guests: 
+   	   		<select name="numberOfGuests" required>
    	   			<option value="1">1 </option>
-   	   			<option value="2">2 </option>
+   	   			<option value="2" selected>2 </option>
    	   			<option value="3">3 </option>
    	   			<option value="4">4 </option>
    	   			<option value="5">5 </option>
@@ -42,10 +42,12 @@
    	   	{% for r in rooms %}
 		<a class="btn" href="/createres/{{ r.roomNumber }}"> {{ r.roomNumber }} </a>
 		{% endfor %}
+	{%if rooms %}
+		<p>r passed</p>
 		{% if rooms|length == 0 %}
 			<p>No available rooms found.</p>
 		{% endif %}
-		
+	{% endif %}
 {% endblock %}
 
 

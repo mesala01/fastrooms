@@ -62,17 +62,6 @@ def droptables():
 	createTestRes()
 	createTestGuest()
 	return render_template('basic.html',title="Tables erased.")
-
-#class RoomRes(db.Model): #secondary table. Matches rooms with res
-#	__tablename__ = 'roomres'
-#	roomNumber = db.Column(db.String, db.ForeignKey('rooms.roomNumber'))
-#	resID = db.Column(db.Integer, db.ForeignKey('res.resID'))
-	
-#class GuestRes(db.Model): #secondary table. Matches guests with res
-#	__tablename__ = 'guestres'
-#	guestID = db.Column(db.Integer, db.ForeignKey('guests.guestID'))
-#	resID = db.Column(db.Integer, db.ForeignKey('res.resID'))
-
 #--------
 
 
@@ -170,20 +159,22 @@ def op_checkOutOn(d=datetime.date.today()):
 def daterange(start, end):
     r = (end-start).days
     return [start+datetime.timedelta(days=i) for i in range(r)]
-def getAvailableRoomsBetween(checkIn=datetime.date.today(),checkOut=datetime.date(2014,5,16)):
+def getAvailableRoomsBetween(checkIn,checkOut,guests):
 	allRooms = Room.query.filter().all()
 	content = ""
 	goodRoom = []
 	for rm in allRooms:
 		conflict = False
-		for res in getAllResForRoom(rm):
-			resRange = daterange(res.inDate, res.outDate)
-			testRange = daterange(checkIn, checkOut)
-			for testDate in testRange:
-				if testDate in resRange:
-					conflict = True
-		if (conflict == False):
-			goodRoom.append(rm)
+		if rm.occupancy >= guests:
+			for res in getAllResForRoom(rm):
+				resRange = daterange(res.inDate, res.outDate)
+				testRange = daterange(checkIn, checkOut)
+				for testDate in testRange:
+					if testDate in resRange:
+						conflict = True
+			if (conflict == False and rm.occupancy >= guests):
+				goodRoom.append(rm)
+				print("room is good")
 						
 	return goodRoom #returns room objects
 #--------
@@ -354,13 +345,16 @@ def roomsearch():
 	if request.method == "POST":
 		checkInS = request.form['checkIn']
 		checkOutS = request.form['checkOut']
-		numberOfRooms = request.form['numberOfRooms']
-		if not checkInS or not checkOutS or not numberOfRooms:
+		numberOfGuests = request.form['numberOfGuests']
+		if not checkInS or not checkOutS or not numberOfGuests:
 			errors = "Please enter all the fields."
 		if not errors:
 			checkInD = datetime.datetime.strptime(checkInS,'%Y/%m/%d').date()
 			checkOutD = datetime.datetime.strptime(checkOutS,'%Y/%m/%d').date()
-			rooms = getAvailableRoomsBetween(checkInD,checkOutD)
+			numGuests = int(numberOfGuests)
+			print ('Guests' + str(numGuests))
+			rooms = getAvailableRoomsBetween(checkInD,checkOutD,numGuests)
+			print(len(rooms))
 			return render_template('RoomReservation.html',title=title,errors=errors,rooms=rooms)
 		return render_template('RoomReservation.html',title=title,errors=errors)
 	return render_template('RoomReservation.html',title=title)
