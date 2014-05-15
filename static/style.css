@@ -5,3 +5,11 @@
 
 body{
 	background-color: #DDD;
+}
+	
+.right {
+    float:right;
+}
+.hide2 {
+    display:none
+}

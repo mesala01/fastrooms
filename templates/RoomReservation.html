@@ -1,6 +1,7 @@
 {% extends "display.html" %}
 {% block head %}
     <!-- <link rel= "stylesheet" type="text/css" href="{{ url_for('static', filename='styleReservation.css') }}"> -->
+    <script src="static/showhide.js"></script>
 {% endblock %}
 
 {% block body1 %}
@@ -13,6 +14,19 @@
    				{{ errors }}
    			 </div>
    		{% endif %}
+
+
+ {% if not rooms %}  	   
+  <div id='div_message'>
+ {% else %}
+ <a href="javascript:toggle_message('inline')" id='href_about'>
+ 			<button type="button" class="btn btn-xs btn-default">New Search</button></a>
+ <br />
+ <a class="hide2" href="javascript:toggle_message('none')" id='hreh_close'>
+ 				<button type="button" class="btn btn-xs btn-default">(Close)</button></a>
+  <div id='div_message' class="hide2">
+ {% endif %}  
+   	  
    	   <form class="form-horizontal" action="/roomsearch" method="POST">
    	   		
    	   		Check In: <input type="date" name="checkIn" required>
@@ -33,7 +47,7 @@
 	 
 	    	<input type="submit" class="btn btn-large btn-primary" value="Check Availibity">
 	  </div>
-	 
+  </div>	 
 
    	 
    	   	</form>
