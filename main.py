@@ -195,6 +195,26 @@ def getAvailableRoomsBetween(checkIn,checkOut,guests):
 	return goodRoom #returns room objects
 #--------
 
+#----Reservation Checkin/checkout----
+def checkIn(res):
+	res.inRoom = True
+	occupied(getRoom(res.roomNumber))
+
+def checkOut(res):
+	res.inRoom = False
+	vacant(getRoom(res.roomNumber))
+
+@app.route('/res/<resID>/in')
+def checkIn_page(resID):
+	checkIn(getRes(int(resID)))
+	return redirect(request.referrer or '/op')
+	
+@app.route('/res/<resID>/out')
+def checkOut_page(resID):
+	checkOut(getRes(int(resID)))
+	return redirect(request.referrer or '/op')
+#--------
+
 #----Rooms Overview----
 def op_vacancies(includeRoomsWithIncomingRes=True,includeDirtyRooms=False):
 	result = []
