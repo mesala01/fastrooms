@@ -360,8 +360,9 @@ def room_info_page(myroom):
 def res_info_page(myres):
 	rv = getRes(int(myres))
 	g = getGuest(rv.guestID)
+	rm = getRoom(rv.roomNumber)
 	title = "Reservation Lookup: " + str(rv.resID)
-	return render_template('resinfo.html',title=title,res=rv,g=g)
+	return render_template('resinfo.html',title=title,res=rv,g=g,rm=rm)
 	
 @app.route('/hk')
 def housekeeping_page():
