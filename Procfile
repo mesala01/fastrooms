@@ -1,1 +1,1 @@
-web: gunicorn xkcd:app
+web: gunicorn main:app
