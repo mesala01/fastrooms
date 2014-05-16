@@ -38,7 +38,9 @@
 			<td>
 				{% if not res.inRoom %}
 					{% if not rm.clean %}
-						<strong>Room is not ready</strong>
+						<span class="label label-danger">
+							Room is not ready
+						</span>
 					{% else %}
 					<a href="/res/{{ res.resID }}/in"><button type="button" class="btn btn-sm btn-success">Check In</button></a>
 					{% endif %}
