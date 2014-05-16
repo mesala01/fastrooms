@@ -1,0 +1,39 @@
+{% extends "display.html" %}
+
+{% block head %}
+	<link href="/static/table.css" rel="stylesheet">
+{% endblock %}
+
+{% block body1 %}
+   
+	<div class="col-xs-12">
+	  <div class="panel panel-info">
+		<div class="panel-heading">
+		  <h3 class="panel-title">Dirty Rooms</h3>
+		</div>
+		
+		<div class="panel-body">	
+	   	{% if not rooms %}
+	   		<p>All rooms clean.</p>
+	   	{% else %}
+	   		<table class="CSSTableGenerator">
+				<tr>
+					<td>Room Number</td>
+					<td>Building</td>
+					<td></td>
+				</tr>
+				{% for r in rooms %}
+				<tr>
+					<td><a href="/room/{{ r.roomNumber }}"><strong>{{ r.roomNumber }}</strong></a></td>
+					<td>{{ r.building }}</td>
+					<td><a href="/room/{{ r.roomNumber }}/clean"><button type="button" class="btn btn-sm btn-info">Mark as clean</button></a></td>
+	   			</tr>
+	   			{% endfor %}
+	   		</table>
+	   	
+	   	{% endif %}
+		</div>
+	  </div>
+
+    
+{% endblock %}
