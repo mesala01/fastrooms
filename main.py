@@ -33,7 +33,8 @@ class Reservation(db.Model):
     inDate = db.Column(db.Date)
     outDate = db.Column(db.Date)
     roomNumber = db.Column(db.String)
-    status = db.Column(db.String) #prior to check in:"booked"  checkedin: "open"  checked out: "closed"
+    numGuests = db.Column(db.Integer)
+    inRoom = db.Column(db.Boolean)
 
 class Room(db.Model):
     __tablename__ = 'rooms'
@@ -61,10 +62,9 @@ def droptables():
 	createTestRoom()
 	createTestRes()
 	createTestGuest()
+	print("TABLES REBUILT")
 	return render_template('basic.html',title="Tables erased.")
 #--------
-
-
 
 #----TestCases----
 def createTestRoom():
@@ -79,6 +79,7 @@ def createTestRoom():
 def createTestRes():
 	fakeRes = Reservation()
 	fakeRes.resID = 1
+	fakeRes.guestID = 4
 	fakeRes.roomNumber = '100'
 	fakeRes.inDate = datetime.date(2014,4,12)
 	fakeRes.outDate = datetime.date.today()
@@ -86,7 +87,13 @@ def createTestRes():
 	db.session.commit()
 	
 def createTestGuest():
-	pass
+	fakeGuest = Guest()
+	fakeGuest.guestID = 4
+	fakeGuest.name = "Steve"
+	fakeGuest.address = "123 Street"
+	fakeGuest.phone = "8472751128"
+	db.session.add(fakeGuest)
+	db.session.commit()
 #--------
 
 #----Database Adders----
@@ -131,6 +138,15 @@ def getRes(rvtnID):
 		print('DATA ERROR: Duplicate reservation numbers from getRes('+ str(rvtnID) +').')
 	return result[0]
 	
+def getGuest(guestID_Str):
+	gID = int(guestID_Str)
+	result = []
+	for g in db.session.query(Guest).filter_by(guestID=gID):
+		result.append(g)
+	if (len(result) > 1):
+		print('DATA ERROR: Duplicate guestID from getGuest('+ guestID_Str +').')
+	return result[0]	
+
 def getAllResForRoom(room):
 	roomNum = room.roomNumber
 	rvtns = []
@@ -177,6 +193,26 @@ def getAvailableRoomsBetween(checkIn,checkOut,guests):
 				print("room is good")
 						
 	return goodRoom #returns room objects
+#--------
+
+#----Reservation Checkin/checkout----
+def checkIn(res):
+	res.inRoom = True
+	occupied(getRoom(res.roomNumber))
+
+def checkOut(res):
+	res.inRoom = False
+	vacant(getRoom(res.roomNumber))
+
+@app.route('/res/<resID>/in')
+def checkIn_page(resID):
+	checkIn(getRes(int(resID)))
+	return redirect(request.referrer or '/op')
+	
+@app.route('/res/<resID>/out')
+def checkOut_page(resID):
+	checkOut(getRes(int(resID)))
+	return redirect(request.referrer or '/op')
 #--------
 
 #----Rooms Overview----
@@ -267,11 +303,11 @@ def operations_page():
 	title = "Operations"
 	checkin = ""
 	for rv in op_checkInOn(datetime.date.today()):
-		checkin += '<a href="resinfo/' + str(rv.resID) + '">' + str(rv.resID) + '</a><br />'
+		checkin += '<a href="res/' + str(rv.resID) + '">' + str(rv.resID) + '</a><br />'
 		
 	checkout = ""
 	for rv in op_checkOutOn(datetime.date.today()):
-		checkout += '<a href="resinfo/' + str(rv.resID) + '">' + str(rv.resID) + '</a><br />'
+		checkout += '<a href="res/' + str(rv.resID) + '">' + str(rv.resID) + '</a><br />'
  
 	vacancies = ""
 	for rm in op_vacancies(False,True):
@@ -323,11 +359,12 @@ def room_info_page(myroom):
 # 		content += "Dirty <br />"
 	return render_template('roominfo.html',title=title,r=rm)
 	
-@app.route('/resinfo/<myres>')
+@app.route('/res/<myres>')
 def res_info_page(myres):
 	rv = getRes(int(myres))
+	g = getGuest(rv.guestID)
 	title = "Reservation Lookup: " + str(rv.resID)
-	return render_template('basic.html',title=title)
+	return render_template('resinfo.html',title=title,res=rv,g=g)
 	
 @app.route('/hk')
 def housekeeping_page():
