@@ -1,0 +1,51 @@
+{% extends "display.html" %}
+
+{% block body1 %}
+	<div class="well">
+	<table style="width:300px">
+		<tr>
+			<td>Reservation ID:</td>
+			<td>{{ res.resID }}</td>
+		</tr>
+		<tr>
+			<td>Guest:</td>
+			<td>{{ g.name }} ({{ g.guestID }})</td>
+		</tr>
+		<tr>
+			<td>Dates:</td>
+			<td>{{ res.inDate }} to {{ res.outDate }}</td>
+		</tr>
+		<tr>
+			<td>Room:</td>
+			<td><a href="/room/{{ res.roomNumber }}">{{ res.roomNumber }}</a></td>
+		</tr>
+		<tr>
+			<td>Number of Guests:</td>
+			<td>{{ res.numGuests }}</td>
+		</tr>
+		<tr>
+			<td>Status:</td>
+			<td>
+				{% if res.inRoom %}
+					<strong>Checked in<strong>
+				{% else %}
+					<strong>Not checked in</strong>
+				{% endif %}
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>
+				{% if not res.inRoom %}
+					<a href="/res/{{ res.resID }}/in"><button type="button" class="btn btn-sm btn-success">Check In</button></a>
+				{% else %}
+					<a href="/res/{{ res.resID }}/out"><button type="button" class="btn btn-sm btn-danger">Check Out</button></a>
+				{% endif %}
+			</td>
+		</tr>
+	</table>
+	
+
+	</div>
+	<a href="/op">Operations Page</a>
+{% endblock%}
