@@ -81,7 +81,7 @@ def createTestRes():
 	fakeRes.resID = 1
 	fakeRes.guestID = 4
 	fakeRes.roomNumber = '100'
-	fakeRes.inDate = datetime.date(2014,4,12)
+	fakeRes.inDate = datetime.date.today()
 	fakeRes.outDate = datetime.date.today()
 	db.session.add(fakeRes)
 	db.session.commit()
