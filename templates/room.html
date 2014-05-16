@@ -36,17 +36,18 @@
 			<td>{{ r.building }}</td>
 			<td>{{ r.occupancy }}</td>
 			
-			{% if r.clean %}
-				<td>Clean</td>
-			{% else %}
-				<td>Dirty</td>
-			{% endif %}
-			
 			{% if r.occupied %}
 				<td>Occupied</td>
 			{% else %}
 				<td>Vacant</td>
 			{% endif %}
+			
+			{% if r.clean %}
+				<td>Clean</td>
+			{% else %}
+				<td>Dirty</td>
+			{% endif %}
+		
 		</tr>
 	{% endfor %}
 	</table>
