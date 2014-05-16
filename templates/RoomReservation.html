@@ -1,14 +1,12 @@
 {% extends "display.html" %}
 {% block head %}
-    <!-- <link rel= "stylesheet" type="text/css" href="{{ url_for('static', filename='styleReservation.css') }}"> -->
     <script src="static/showhide.js"></script>
 {% endblock %}
 
 {% block body1 %}
-    <div class="container">
+    <div class="container well">
       <div class="header">
    		</div>
-   		<hr/>
    		{% if errors %}
    			<div class="alert alert-danger">
    				{{ errors }}
@@ -42,6 +40,9 @@
    	   			<option value="3">3 </option>
    	   			<option value="4">4 </option>
    	   			<option value="5">5 </option>
+   	   			<option value="5">6 </option>
+   	   			<option value="5">7 </option>
+   	   			<option value="5">8 </option>
    	   		</select>
    	   		<br />
 	 
