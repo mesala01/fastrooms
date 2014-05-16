@@ -332,10 +332,7 @@ def res_info_page(myres):
 @app.route('/hk')
 def housekeeping_page():
 	title = "Housekeeping Overview"
-	content = "The following rooms need to be cleaned: "
-	for r in getDirtyRooms():
-		content += "<br /> <a href=\"/room/" + r.roomNumber +"/clean\">" +r.roomNumber
-	return render_template('basic.html',title=title,content=content)
+	return render_template('hk.html',title=title,rooms=getDirtyRooms())
 	
 	
 @app.route('/roomsearch', methods=['GET','POST'])
