@@ -1,5 +1,10 @@
 {% extends "display.html" %}
 
+{% block head %}
+	<link href="/static/table.css" rel="stylesheet">
+{% endblock %}
+
+
 {% block body1 %}
 
 <form class="well" method="POST" action="/building">
@@ -9,9 +14,15 @@
 </form>
 <hr />
 <h2> Buildings </h2>
-	<ul>
-	{% for i in buildings %}
-		<li>{{ i.name }}</li>
-	{% endfor %}
-	</ul>
+	<div class="CSSTableGenerator">
+		<table>
+			<tr>
+				<td>Building Name</td>
+			</tr>
+			{% for b in buildings %}
+			<tr>
+				<td>{{ b.name }}</td>
+			</tr>
+			{% endfor %}
+		</table>
 {% endblock %}
