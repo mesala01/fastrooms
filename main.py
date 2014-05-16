@@ -117,6 +117,15 @@ def addRoom(num,bldg,occ):
 	r.clean = False
 	db.session.add(r)
 	db.session.commit() 
+
+def addGuest(name,address,phone):
+	g = Guest()
+	g.guestID = 4
+	g.name = name
+	g.address = address
+	g.phone = phone
+	db.session.add(g)
+	db.session.commit()
 #-------
 
 #----Database Accessors----
@@ -161,13 +170,13 @@ def getResDates(rvtn):
 
 def op_checkInOn(d=datetime.date.today()):
 	reservations = []
-	for rv in db.session.query(Reservation).filter_by(inDate=d):
+	for rv in db.session.query(Reservation).filter_by(inDate=d,inRoom=False):
 		reservations.append(rv)
 	return reservations
 	
 def op_checkOutOn(d=datetime.date.today()):
 	reservations = []
-	for rv in db.session.query(Reservation).filter_by(outDate=d):
+	for rv in db.session.query(Reservation).filter_by(outDate=d,inRoom=True):
 		reservations.append(rv)
 	return reservations
 	
@@ -303,11 +312,11 @@ def operations_page():
 	title = "Operations"
 	checkin = ""
 	for rv in op_checkInOn(datetime.date.today()):
-		checkin += '<a href="res/' + str(rv.resID) + '">' + str(rv.resID) + '</a><br />'
+		checkin += '<a href="res/' + str(rv.resID) + '">' + str(rv.resID) + " - " + getGuest(rv.guestID).name + '</a><br />'
 		
 	checkout = ""
 	for rv in op_checkOutOn(datetime.date.today()):
-		checkout += '<a href="res/' + str(rv.resID) + '">' + str(rv.resID) + '</a><br />'
+		checkout += '<a href="res/' + str(rv.resID) + '">' + str(rv.resID) + " - " + getGuest(rv.guestID).name + '</a><br />'
  
 	vacancies = ""
 	for rm in op_vacancies(False,True):
@@ -341,22 +350,10 @@ def building_page():
 def add_guest_page():
 	pass
 
-
 @app.route('/room/<myroom>')
 def room_info_page(myroom):
 	rm = getRoom(myroom)
 	title = "Room " + str(rm.roomNumber)
-# 	content = "Building: " + str(rm.building) + "<br />"
-# 	content += "Occupancy: " + str(rm.occupancy) + "<br />"
-# 	content += "<hr />"
-# 	if (rm.occupied):
-# 		content += "Occupied <br />"
-# 	else:
-# 		content += "Vacant <br />"
-# 	if (rm.clean):
-# 		content += "Clean <br />"
-# 	else:
-# 		content += "Dirty <br />"
 	return render_template('roominfo.html',title=title,r=rm)
 	
 @app.route('/res/<myres>')
