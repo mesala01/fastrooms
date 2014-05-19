@@ -66,42 +66,10 @@ class Guest(db.Model):
 def droptables():
 	db.drop_all()
 	db.create_all()
-	#createTestRoom()
-	#createTestRes()
-	#createTestGuest()
 	print("TABLES REBUILT")
 	return render_template('basic.html',title="Tables erased.")
 #--------
 
-#----TestCases----
-def createTestRoom():
-	fakeRoom = Room()
-	fakeRoom.roomNumber = '100'
-	fakeRoom.occupancy = 2
-	fakeRoom.occupied = False
-	fakeRoom.clean = False
-	db.session.add(fakeRoom)
-	db.session.commit()
-
-def createTestRes():
-	fakeRes = Reservation()
-	fakeRes.resID = 1
-	fakeRes.guestID = 4
-	fakeRes.roomNumber = '100'
-	fakeRes.inDate = datetime.date(2014,5,6)
-	fakeRes.outDate = datetime.date.today()
-	db.session.add(fakeRes)
-	db.session.commit()
-	
-def createTestGuest():
-	fakeGuest = Guest()
-	fakeGuest.guestID = 4
-	fakeGuest.name = "Steve"
-	fakeGuest.address = "123 Street"
-	fakeGuest.phone = "8472751128"
-	db.session.add(fakeGuest)
-	db.session.commit()
-#--------
 
 #----Database Adders----
 def addBuilding(name):
@@ -136,7 +104,6 @@ def addRes(gID,inD,outD,room,guests):
 	r.inRoom=False
 	db.session.add(r)
 	db.session.commit()
-	
 
 def addGuest(ID,name,address,phone,email):
 	g = Guest()
@@ -183,6 +150,12 @@ def getAllResForRoom(room):
 	for rv in db.session.query(Reservation).filter_by(roomNumber=roomNum):
 		rvtns.append(rv)
 	return rvtns
+
+def getAllResForGuest(g):
+	rvtns = []
+	for rv in db.session.query(Reservation).filter_by(guestID=g.guestID):
+		rvtns.append(rv)
+	return rvtns
 #--------
 
 #----Reservation date accessors----
@@ -220,7 +193,6 @@ def getAvailableRoomsBetween(checkIn,checkOut,guests):
 						conflict = True
 			if (conflict == False and rm.occupancy >= guests):
 				goodRoom.append(rm)
-				print("room is good")
 						
 	return goodRoom #returns room objects
 #--------
@@ -326,7 +298,6 @@ def home_page():
             <li><a href="/hk">Housekeeping</a></li>\
             <li><a href="/config">Configuration</a></li>' )
 
-
 @app.route('/res')
 def res_page():
 	title = "Reservations"
@@ -371,10 +342,6 @@ def building_page():
 	buildings = db.session.query(Building)
 	return render_template('building.html',form=form,buildings=buildings)
 
-@app.route('/addguest')
-def add_guest_page():
-	pass
-
 @app.route('/room/<myroom>')
 def room_info_page(myroom):
 	rm = getRoom(myroom)
@@ -388,6 +355,13 @@ def res_info_page(myres):
 	rm = getRoom(rv.roomNumber)
 	title = "Reservation Lookup: " + str(rv.resID)
 	return render_template('resinfo.html',title=title,res=rv,g=g,rm=rm)
+
+@app.route('/guest/<myguest>')
+def guest_info_page(myguest):
+	g = getGuest(myguest)
+	rvtns = getResForGuest(g)
+	title = "Guest Info"
+	return render_template('guestinfo.html',title=title,g=g,rvtns=rvtns)
 	
 @app.route('/hk')
 def housekeeping_page():

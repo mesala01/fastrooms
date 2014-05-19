@@ -59,7 +59,9 @@
    	   		<input type="hidden" value="{{ outS }}" name="myOutS">
    	   		<input type="hidden" value="{{ guestsS }}" name="myGuestsS">
    	   	{% for r in rooms %}
-   	   		<input type="radio" name="myRoomNumber" value="{{ r.roomNumber}}">{{ r.roomNumber }}<br>
+   	   		<div class="container">
+   	   		<input type="radio" name="myRoomNumber" value="{{ r.roomNumber}}">{{ r.roomNumber }}<br />
+   	   		</div>
 		{% endfor %}
 			<input type="submit" value="Next ->">
 		</div>

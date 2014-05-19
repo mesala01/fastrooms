@@ -1,0 +1,47 @@
+{% extends "display.html" %}
+
+{% block body1 %}
+	<div class="well">
+	<table style="width:300px">
+		<tr>
+			<td>GuestID:</td>
+			<td>{{ g.guestID }}</td>
+		</tr>
+		<tr>
+			<td>Name:</td>
+			<td>{{ g.name }}</td>
+		</tr>
+		<tr>
+			<td>Address:</td>
+			<td>{{ g.address }}</td>
+		</tr>
+		<tr>
+			<td>Phone:</td>
+			<td>{{ g.phone }}</td>
+		</tr>
+		<tr>
+			<td>Email:</td>
+			<td>{{ g.email }}</td>
+		</tr>
+	</table>
+	
+	<div class="CSSTableGenerator">
+	<table>
+		<tr>
+			<td>Reservation ID</td>
+			<td>Check In Date</td>
+			<td>Check Out Date</td>
+		</td>
+		{% for rv in rvtns %}
+		<tr>
+			<td><a href="/res/{{ res.resID}}">{{ res.resID }}</td>
+			<td>{{ res.inDate }}</td>
+			<td>{{ res.outDate }}</td>
+		</tr>
+		{% endfor %}
+	</table>
+	</div>
+
+	</div>
+	<a href="/op">Operations Page</a>
+{% endblock%}
