@@ -75,7 +75,7 @@ def createTestRoom():
 	fakeRoom = Room()
 	fakeRoom.roomNumber = '100'
 	fakeRoom.occupancy = 2
-	fakeRoom.occupied = True
+	fakeRoom.occupied = False
 	fakeRoom.clean = False
 	db.session.add(fakeRoom)
 	db.session.commit()
@@ -317,7 +317,11 @@ def dirty_page(roomNumber):
 @app.route('/', methods=['GET','POST'])
 def home_page():
 	title = "Home"
-	return render_template('basic.html',title=title)
+	return render_template('basic.html',title=title,content='Welcome to FastRooms \
+			 <li><a href="/roomsearch">Create Reservation</a></li> \
+            <li><a href="/op">Operations</a></li>\
+            <li><a href="/hk">Housekeeping</a></li>\
+            <li><a href="/config">Configuration</a></li>' )
 
 
 @app.route('/res')
