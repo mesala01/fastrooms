@@ -11,7 +11,7 @@ import random
 app = Flask(__name__)
 app.secret_key = os.urandom(30)
 app.debug = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 db = SQLAlchemy(app)
 
 appname = config.appname
