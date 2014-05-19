@@ -337,7 +337,8 @@ def operations_page():
 @app.route('/room', methods=['GET','POST'])
 def room_page():
 	if request.method == 'POST':
-		addRoom(request.form['roomNumber'],request.form['building'],request.form['occupancy'])
+		roomNumber= request.form['roomNumber'].replace(" ", "")
+		addRoom(roomNumber,request.form['building'],request.form['occupancy'])
 		
 	form = forms.addRoom()
 	rooms = db.session.query(Room)
