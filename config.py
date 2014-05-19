@@ -1,4 +1,4 @@
 appname = "FastRooms"
-build = "0.2"
+build = "0.5"
 sitename = "MyHotel"
 

@@ -5,7 +5,6 @@ import datetime
 import config
 import forms
 import os
-import re
 import random
 
 
@@ -342,7 +341,8 @@ def room_page():
 		
 	form = forms.addRoom()
 	rooms = db.session.query(Room)
-	return render_template('room.html',form=form,rooms=rooms)
+	bldgs = db.session.query(Building)
+	return render_template('room.html',form=form,rooms=rooms,bldgs=bldgs)
 
 @app.route('/building', methods=['GET', 'POST'])
 def building_page():

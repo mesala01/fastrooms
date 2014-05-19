@@ -9,7 +9,13 @@
 <form class="well" method="POST" action="/room">
     {{ form.csrf_token }}
     {{ form.roomNumber.label }} {{ form.roomNumber(size=8) }} <br />
-    {{ form.building.label }} {{ form.building(size=12) }} <br />
+    <strong>Building</strong>
+    <select name="building">
+    	<option value="None">None</option>
+    	{% for b in bldgs %}
+    		<option value="{{ b.name }}">{{ b.name }}</option>
+    	{% endfor %}
+    </select> <br />
     {{ form.occupancy.label }} {{ form.occupancy(size=2) }}<br />
     <input type="submit" value="Add">
 </form>
