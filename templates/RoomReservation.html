@@ -60,7 +60,8 @@
    	   		<input type="hidden" value="{{ guestsS }}" name="myGuestsS">
    	   	{% for r in rooms %}
    	   		<div class="container">
-   	   		<input type="radio" name="myRoomNumber" value="{{ r.roomNumber}}">{{ r.roomNumber }}<br />
+   	   		<input type="radio" name="myRoomNumber" value="{{ r.roomNumber}}">{{ r.roomNumber }} 
+   	   					{% if r.building != "None" %}({{ r.building }}){% endif %}<br />
    	   		</div>
 		{% endfor %}
 			<br /><input type="submit" value="Next ->">
