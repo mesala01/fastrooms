@@ -15,6 +15,7 @@ app.secret_key = os.urandom(30)
 app.debug = True
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+#app.config['SQLALCHEMY_DATABASE_URI'] ='sqlite:////tmp/test.db'
 db = SQLAlchemy(app)
 
 appname = config.appname
@@ -359,7 +360,7 @@ def res_info_page(myres):
 @app.route('/guest/<myguest>')
 def guest_info_page(myguest):
 	g = getGuest(myguest)
-	rvtns = getResForGuest(g)
+	rvtns = getAllResForGuest(g)
 	title = "Guest Info"
 	return render_template('guestinfo.html',title=title,g=g,rvtns=rvtns)
 	
