@@ -8,3 +8,4 @@ WTForms==1.0.5
 Werkzeug==0.9.4
 gunicorn==18.0
 itsdangerous==0.24
+psycopg2==2.5.3
