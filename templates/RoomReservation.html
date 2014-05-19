@@ -52,13 +52,17 @@
    	   	</form>
    	   	
    	   	<hr />
+   	   	{% if rooms %}
+   	   	<div class="well">
+   	   	<form action="/createres" method="POST">
+   	   		<input type="hidden" value="{{ inS }}" name="myInS">
+   	   		<input type="hidden" value="{{ outS }}" name="myOutS">
+   	   		<input type="hidden" value="{{ guestsS }}" name="myGuestsS">
    	   	{% for r in rooms %}
-		<a class="btn" href="/createres/{{ r.roomNumber }}"> {{ r.roomNumber }} </a>
+   	   		<input type="radio" name="myRoomNumber" value="{{ r.roomNumber}}">{{ r.roomNumber }}<br>
 		{% endfor %}
-	{%if rooms %}
-		<p>r passed</p>
-		{% if rooms|length == 0 %}
-			<p>No available rooms found.</p>
+			<input type="submit" value="Next ->">
+		</div>
 		{% endif %}
-	{% endif %}
+
 {% endblock %}
