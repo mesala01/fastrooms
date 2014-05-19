@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <title>Fastrooms App</title>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet"> 
+    <link rel= "stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">   
+  </head>
+  <body>
+   
+    <header>
+      <div class="container">
+        <h1 class="logo">Fastrooms Registration Page</h1>
+      </div>
+    </header> 
+     
+    <div class="container">
+      {% block content %}
+      {% endblock %}
+    </div>
+     
+  </body>
+</html>

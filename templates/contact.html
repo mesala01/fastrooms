@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+ 
+{% block content %}
+  <h2>Contact</h2>
+
+  {% for message in get_flashed_messages() %}
+  <div class="flash">{{ message }}</div>
+   {% endfor %}
+
+
+  {% for message in form.Name.errors %}
+    <div class="flash">{{ message }}</div>
+  {% endfor %}
+ 
+  {% for message in form.Address.errors %}
+    <div class="flash">{{ message }}</div>
+  {% endfor %}
+ 
+  {% for message in form.Phone.errors %}
+    <div class="flash">{{ message }}</div>
+  {% endfor %}
+
+  {% for message in form.Email.errors %}
+    <div class="flash">{{ message }}</div>
+  {% endfor %}
+
+
+ 
+
+  <form action="/register" method="POST">
+    <input type="hidden" value="{{ inS }}" name="inDateS">
+    <input type="hidden" value="{{ outS }}" name="outDateS">
+    <input type="hidden" value="{{ numG }}" name="numGuestsS">
+    <input type="hidden" value="{{ rn }}" name="roomNum">
+ 
+    {{ form.Name.label }}
+    {{ form.Name }}
+ 
+    {{ form.Address.label }}
+    {{ form.Address }}
+ 
+    {{ form.Phone.label }}
+    {{ form.Phone }}
+
+    {{ form.Email.label }}
+    {{ form.Email }}
+ 
+    {{ form.Submit }}
+  </form>
+   
+{% endblock %}

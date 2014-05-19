@@ -5,6 +5,7 @@ import datetime
 import config
 import forms
 import os
+import random
 
 app = Flask(__name__)
 app.secret_key = os.urandom(30)
@@ -23,7 +24,8 @@ def inject_globals():
 		site = site
     )
 
-
+def getnewID():
+	return random.randint(1,5000)
 
 #----DATABASE TABLES----
 class Reservation(db.Model):
@@ -54,6 +56,7 @@ class Guest(db.Model):
 	name = db.Column(db.String)
 	address = db.Column(db.String)
 	phone = db.Column(db.String)
+	email= db.Column(db.String)	
  
 @app.route('/drop')
 def droptables():
@@ -81,7 +84,7 @@ def createTestRes():
 	fakeRes.resID = 1
 	fakeRes.guestID = 4
 	fakeRes.roomNumber = '100'
-	fakeRes.inDate = datetime.date.today()
+	fakeRes.inDate = datetime.date(2014,5,6)
 	fakeRes.outDate = datetime.date.today()
 	db.session.add(fakeRes)
 	db.session.commit()
@@ -118,12 +121,26 @@ def addRoom(num,bldg,occ):
 	db.session.add(r)
 	db.session.commit() 
 
-def addGuest(name,address,phone):
+def addRes(gID,inD,outD,room,guests):
+	r=Reservation()
+	r.resID=getnewID()
+	r.guestID=gID
+	r.inDate=inD
+	r.outDate=outD
+	r.roomNumber=room
+	r.numGuests=guests
+	r.inRoom=False
+	db.session.add(r)
+	db.session.commit()
+	
+
+def addGuest(ID,name,address,phone,email):
 	g = Guest()
-	g.guestID = 4
+	g.guestID = ID
 	g.name = name
 	g.address = address
 	g.phone = phone
+	g.email = email
 	db.session.add(g)
 	db.session.commit()
 #-------
@@ -316,7 +333,7 @@ def operations_page():
 		
 	checkout = ""
 	for rv in op_checkOutOn(datetime.date.today()):
-		checkout += '<a href="res/' + str(rv.resID) + '">' + str(rv.resID) + " - " + getGuest(rv.guestID).name + '</a><br />'
+		checkout += '<a href="res/' + str(rv.resID) + '">' + str(rv.resID) + " - " + getGuest(str(rv.guestID)).name + '</a><br />'
  
 	vacancies = ""
 	for rm in op_vacancies(False,True):
@@ -381,15 +398,50 @@ def roomsearch():
 		if not checkInS or not checkOutS or not numberOfGuests:
 			errors = "Please enter all the fields."
 		if not errors:
-			checkInD = datetime.datetime.strptime(checkInS,'%Y/%m/%d').date()
-			checkOutD = datetime.datetime.strptime(checkOutS,'%Y/%m/%d').date()
+			checkInD = datetime.datetime.strptime(checkInS,'%m/%d/%Y').date()
+			checkOutD = datetime.datetime.strptime(checkOutS,'%m/%d/%Y').date()
 			numGuests = int(numberOfGuests)
 			print ('Guests' + str(numGuests))
 			rooms = getAvailableRoomsBetween(checkInD,checkOutD,numGuests)
 			print(len(rooms))
-			return render_template('RoomReservation.html',title=title,errors=errors,rooms=rooms)
+			return render_template('RoomReservation.html',title=title,errors=errors,rooms=rooms,
+										inS=checkInS,outS=checkOutS,guestsS=numberOfGuests)
 		return render_template('RoomReservation.html',title=title,errors=errors)
 	return render_template('RoomReservation.html',title=title)
+
+@app.route('/register', methods=['GET', 'POST'])
+def contact():
+	form = forms.registration()
+	if request.method == 'POST':
+		gID=getnewID()
+		print(gID)
+		addGuest(gID,
+			request.form['Name'],
+			request.form['Address'],
+			request.form['Phone'],
+			request.form['Email']
+		)
+		inD = datetime.datetime.strptime(request.form['inDateS'],'%m/%d/%Y').date()
+		outD = datetime.datetime.strptime(request.form['outDateS'],'%m/%d/%Y').date()
+		addRes(gID,
+			inD,outD,
+			request.form['roomNum'],
+			request.form['numGuestsS']
+			)
+		return render_template('basic.html',content="Reservation added")
+	elif request.method == 'GET':
+		return error404(404)
+
+@app.route('/createres', methods=['POST'])
+def createResPage():
+	form = forms.registration()
+	rn = request.form['myRoomNumber']
+	inS= request.form['myInS']
+	outS = request.form['myOutS']
+	numG = request.form['myGuestsS']
+	# send hidden form data to contact.html.
+	# Contact then sends it along to /register and that part does all the work
+	return render_template('contact.html',form=form,rn=rn,inS=inS,outS=outS,numG=numG)
 
 #--------
 
