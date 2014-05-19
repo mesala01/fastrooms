@@ -21,6 +21,7 @@ db = SQLAlchemy(app)
 appname = config.appname
 build = config.build
 site = config.sitename
+
 @app.context_processor
 def inject_globals():
     return dict(
@@ -63,12 +64,18 @@ class Guest(db.Model):
 	phone = db.Column(db.String)
 	email= db.Column(db.String)	
  
-@app.route('/drop')
+@app.route('/drop', methods=['GET', 'POST'])
 def droptables():
-	db.drop_all()
-	db.create_all()
-	print("TABLES REBUILT")
-	return render_template('basic.html',title="Tables erased.")
+	if request.method == 'POST' and request.form['verify'] == 'delete':
+		db.drop_all()
+		db.create_all()
+		print("TABLES REBUILT")
+		return render_template('basic.html',title="Tables erased.",content="Data has been reset")
+	else:
+		content = 'Type the password to verify. <form action="/drop" method="POST">'
+		content += '<input type="text" name="verify">'
+		content += '<input type="submit" value="Delete Data">'
+		return render_template('basic.html',title="Drop Table Verification",content=content)
 #--------
 
 
@@ -105,6 +112,7 @@ def addRes(gID,inD,outD,room,guests):
 	r.inRoom=False
 	db.session.add(r)
 	db.session.commit()
+	return r.resID
 
 def addGuest(ID,name,address,phone,email):
 	g = Guest()
@@ -370,6 +378,8 @@ def housekeeping_page():
 	return render_template('hk.html',title=title,rooms=getDirtyRooms())
 	
 	
+	
+	
 @app.route('/roomsearch', methods=['GET','POST'])
 def roomsearch():
 	title = "Room Availability Search"
@@ -406,12 +416,12 @@ def contact():
 		)
 		inD = datetime.datetime.strptime(request.form['inDateS'],'%m/%d/%Y').date()
 		outD = datetime.datetime.strptime(request.form['outDateS'],'%m/%d/%Y').date()
-		addRes(gID,
+		id = addRes(gID,
 			inD,outD,
 			request.form['roomNum'],
 			request.form['numGuestsS']
 			)
-		return render_template('basic.html',content="Reservation added")
+		return redirect('/res/'+str(id))
 	elif request.method == 'GET':
 		return error404(404)
 				

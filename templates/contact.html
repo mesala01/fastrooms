@@ -1,7 +1,6 @@
-{% extends "layout.html" %}
+{% extends "display.html" %}
  
-{% block content %}
-  <h2>Contact</h2>
+{% block body1 %}
 
   {% for message in get_flashed_messages() %}
   <div class="flash">{{ message }}</div>
@@ -32,20 +31,27 @@
     <input type="hidden" value="{{ outS }}" name="outDateS">
     <input type="hidden" value="{{ numG }}" name="numGuestsS">
     <input type="hidden" value="{{ rn }}" name="roomNum">
- 
-    {{ form.Name.label }}
-    {{ form.Name }}
- 
-    {{ form.Address.label }}
-    {{ form.Address }}
- 
-    {{ form.Phone.label }}
-    {{ form.Phone }}
-
-    {{ form.Email.label }}
-    {{ form.Email }}
- 
-    {{ form.Submit }}
+ 	<table >
+ 	<tr>
+    	<td>{{ form.Name.label }}</td>
+   		<td>{{ form.Name }}</td>
+ 	</tr>
+ 	<tr>
+ 		<td>{{ form.Address.label }}</td>
+    	<td>{{ form.Address }}</td>
+ 	</tr>
+ 	<tr>
+    	<td>{{ form.Phone.label }}</td>
+    	<td>{{ form.Phone }}</td>
+	</tr>
+ 	<tr>
+    	<td>{{ form.Email.label }}</td>
+    	<td>{{ form.Email }}</td>
+ 	</tr>
+ 	<tr><td></td>
+    	<td>{{ form.Submit }}</td>
+    </tr>
+    </table>
   </form>
    
 {% endblock %}
