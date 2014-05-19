@@ -64,8 +64,8 @@ def droptables():
 	db.drop_all()
 	db.create_all()
 	createTestRoom()
-	createTestRes()
-	createTestGuest()
+	#createTestRes()
+	#createTestGuest()
 	print("TABLES REBUILT")
 	return render_template('basic.html',title="Tables erased.")
 #--------
