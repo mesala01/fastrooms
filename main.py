@@ -11,7 +11,7 @@ import random
 app = Flask(__name__)
 app.secret_key = os.urandom(30)
 app.debug = True
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://vupejbyhinzrfr:ac3aN9RgjxUKGBvYkemIM7OUTl@ec2-54-83-14-68.compute-1.amazonaws.com:5432/dd4a01s00h2dqr'
 db = SQLAlchemy(app)
 
 appname = config.appname
