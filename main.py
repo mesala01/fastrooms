@@ -5,6 +5,7 @@ import datetime
 import config
 import forms
 import os
+import re
 import random
 
 app = Flask(__name__)
@@ -414,24 +415,27 @@ def contact():
 	form = forms.registration()
 	if request.method == 'POST':
 		gID=getnewID()
-		print(gID)
-		addGuest(gID,
-			request.form['Name'],
-			request.form['Address'],
-			request.form['Phone'],
-			request.form['Email']
-		)
-		inD = datetime.datetime.strptime(request.form['inDateS'],'%m/%d/%Y').date()
-		outD = datetime.datetime.strptime(request.form['outDateS'],'%m/%d/%Y').date()
-		addRes(gID,
-			inD,outD,
-			request.form['roomNum'],
-			request.form['numGuestsS']
-			)
-		return render_template('basic.html',content="Reservation added")
-	elif request.method == 'GET':
-		return error404(404)
-
+		email = request.form['Email']
+		if len(email) > 7:
+			if re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", email) != None:
+		
+				addGuest(gID,
+					request.form['Name'],
+					request.form['Address'],
+					request.form['Phone'],
+					request.form['Email']
+				)
+				inD = datetime.datetime.strptime(request.form['inDateS'],'%m/%d/%Y').date()
+				outD = datetime.datetime.strptime(request.form['outDateS'],'%m/%d/%Y').date()
+				addRes(gID,
+					inD,outD,
+					request.form['roomNum'],
+					request.form['numGuestsS']
+					)
+				return render_template('basic.html',content="Reservation added")
+			elif request.method == 'GET':
+				return error404(404)
+		return render_template('basic.html',content="Email not valid")
 @app.route('/createres', methods=['POST'])
 def createResPage():
 	form = forms.registration()
